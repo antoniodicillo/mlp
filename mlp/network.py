@@ -56,6 +56,9 @@ class MLP:
                 dZ = dA * relu_derivative(self.Zs[i - 1])
     # Embaralha os dados e divide em batches
     def fit(self, X, y, optimizer, epochs=10, batch_size=64):
+        self.history_loss = []
+        self.history_acc = []
+
         for epoch in range(epochs):
             # Embaralha os dados
             indexes = np.random.permutation(len(X))
@@ -74,5 +77,20 @@ class MLP:
 
                 total_loss += loss
             
-            loss_media = total_loss / len(X) // batch_size
-            print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss_media:.4f}")
+            loss_media = total_loss / (len(X) // batch_size)
+            acc = self.accuracy(X, y)
+
+            self.history_loss.append(loss_media)
+            self.history_acc.append(acc)
+
+            print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss_media:.4f} - Acc: {acc:.4f}")
+
+    # Compara a classe com a maior probabilidade com o rótulo real
+    def predict(self, X):
+        probs = self.forward(X)
+        return np.argmax(probs, axis=1)
+
+    def accuracy(self, X, y):
+        y_pred = self.predict(X)
+        y_true = np.argmax(y, axis=1)
+        return np.mean(y_pred == y_true)
