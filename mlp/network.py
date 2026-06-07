@@ -54,4 +54,25 @@ class MLP:
             if i > 0:
                 dA = dZ @ self.weights[i].T
                 dZ = dA * relu_derivative(self.Zs[i - 1])
+    # Embaralha os dados e divide em batches
+    def fit(self, X, y, optimizer, epochs=10, batch_size=64):
+        for epoch in range(epochs):
+            # Embaralha os dados
+            indexes = np.random.permutation(len(X))
+            X, y = X[indexes], y[indexes]
 
+            total_loss = 0
+
+            for begin in range(0, len(X), batch_size):
+                X_batch = X[begin:begin + batch_size]
+                y_batch = y[begin:begin + batch_size]
+
+                probs = self.forward(X_batch)
+                loss = cross_entropy(y_batch, probs)
+                self.backward(y_batch)
+                optimizer.step(self)
+
+                total_loss += loss
+            
+            loss_media = total_loss / len(X) // batch_size
+            print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss_media:.4f}")
