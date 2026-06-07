@@ -1,0 +1,568 @@
+# MLP do Zero - Guia de Estudos
+
+## Contexto
+
+Objetivo do projeto:
+
+Implementar um Multi-Layer Perceptron (MLP) do zero usando apenas NumPy.
+
+Requisitos:
+
+- Múltiplas camadas ocultas
+- ReLU
+- Softmax
+- Cross Entropy
+- Backpropagation manual
+- SGD
+- MNIST
+- Accuracy >= 92%
+
+---
+
+# Estrutura do Projeto
+
+```text
+mlp/
+├── network.py
+├── activations.py
+├── losses.py
+└── optimizers.py
+
+notebooks/
+└── experimentos.ipynb
+```
+
+## activations.py
+
+Contém:
+
+- ReLU
+- ReLU Derivative
+
+## losses.py
+
+Contém:
+
+- Softmax
+- Cross Entropy
+
+## network.py
+
+Contém:
+
+- Inicialização da rede
+- Forward Pass
+- Backward Pass
+
+## optimizers.py
+
+Contém:
+
+- SGD
+
+---
+
+# Fluxo Geral do MLP
+
+```text
+Imagem
+↓
+X
+↓
+X @ W + b
+↓
+Z
+↓
+ReLU
+↓
+A
+↓
+...
+↓
+Softmax
+↓
+Probabilidades
+↓
+Cross Entropy
+↓
+Loss
+↓
+Backpropagation
+↓
+dW
+↓
+SGD
+↓
+Atualização dos Pesos
+```
+
+---
+
+# Variáveis Importantes
+
+## X
+
+Entrada da rede.
+
+MNIST:
+
+```text
+28 x 28 = 784 pixels
+```
+
+Exemplo:
+
+```python
+X.shape = (64, 784)
+```
+
+Significa:
+
+```text
+64 imagens
+784 pixels por imagem
+```
+
+---
+
+## W
+
+Pesos da rede.
+
+Exemplo:
+
+```text
+784 → 128 neurônios
+```
+
+```python
+W.shape = (784, 128)
+```
+
+Cada peso representa:
+
+```text
+Quanto um pixel influencia um neurônio.
+```
+
+---
+
+## b
+
+Bias.
+
+Ajuste adicional aplicado ao neurônio.
+
+Exemplo:
+
+```python
+b.shape = (1, 128)
+```
+
+---
+
+## Z
+
+Saída linear da camada.
+
+```python
+Z = X @ W + b
+```
+
+---
+
+## A
+
+Ativação da camada.
+
+```python
+A = relu(Z)
+```
+
+---
+
+# ReLU
+
+## O que é?
+
+Rectified Linear Unit.
+
+Transforma:
+
+```text
+x < 0 → 0
+
+x > 0 → x
+```
+
+---
+
+## Implementação
+
+```python
+def relu(x):
+    return np.maximum(0, x)
+```
+
+---
+
+## Exemplo
+
+Entrada:
+
+```python
+[-3, 5, -1, 8]
+```
+
+Saída:
+
+```python
+[0, 5, 0, 8]
+```
+
+---
+
+## Por que usar?
+
+Sem função de ativação:
+
+```text
+linear
+↓
+linear
+↓
+linear
+```
+
+Continua sendo linear.
+
+A ReLU adiciona não-linearidade à rede.
+
+---
+
+## Comentário
+
+```python
+# Rectified Linear Unit (ReLU)
+# Converte valores negativos para zero e mantém os positivos.
+```
+
+---
+
+# ReLU Derivative
+
+## O que é?
+
+Derivada da ReLU.
+
+Usada durante o Backpropagation.
+
+---
+
+## Implementação
+
+```python
+def relu_derivative(x):
+    return (x > 0).astype(float)
+```
+
+---
+
+## Exemplo
+
+Entrada:
+
+```python
+[-3, 5, -1, 8]
+```
+
+Saída:
+
+```python
+[0, 1, 0, 1]
+```
+
+---
+
+## Interpretação
+
+```text
+1 = neurônio ativo
+
+0 = neurônio inativo
+```
+
+---
+
+## Função
+
+Permitir que o gradiente passe apenas pelos neurônios ativos.
+
+---
+
+## Comentário
+
+```python
+# Derivada da ReLU
+# Retorna 1 para neurônios ativos (x > 0)
+# e 0 para neurônios inativos.
+# É usada no backpropagation para indicar
+# por onde o gradiente deve passar.
+```
+
+---
+
+# Softmax
+
+## Problema
+
+Saída da rede:
+
+```python
+[2.1, 5.3, 1.2]
+```
+
+Não representa probabilidades.
+
+---
+
+## Solução
+
+Softmax converte para:
+
+```python
+[0.038, 0.922, 0.040]
+```
+
+---
+
+## Interpretação
+
+```text
+3.8%
+92.2%
+4.0%
+```
+
+A soma sempre será:
+
+```text
+100%
+```
+
+---
+
+## Objetivo
+
+Transformar a saída da rede em probabilidades.
+
+---
+
+## Comentário
+
+```python
+# Softmax
+# Converte os valores de saída da rede em probabilidades.
+# Quanto maior o valor de entrada, maior será a probabilidade associada.
+# A soma de todas as probabilidades é igual a 1.
+```
+
+---
+
+# Cross Entropy
+
+## O que é?
+
+Função de erro (Loss).
+
+Mede o quanto a rede errou.
+
+---
+
+## Exemplo
+
+Resposta correta:
+
+```python
+y_true =
+[
+ 0,0,0,0,0,0,0,1,0,0
+]
+```
+
+Rede prevê:
+
+```python
+y_pred =
+[
+ 0.01,
+ 0.01,
+ 0.01,
+ 0.01,
+ 0.01,
+ 0.01,
+ 0.01,
+ 0.90,
+ 0.02,
+ 0.01
+]
+```
+
+---
+
+## Resultado
+
+```text
+Loss pequena
+```
+
+A rede acertou.
+
+---
+
+Se:
+
+```python
+P(classe correta) = 0.01
+```
+
+A loss será muito maior.
+
+---
+
+## Interpretação
+
+```text
+Quanto maior a probabilidade atribuída à classe correta,
+menor será a loss.
+```
+
+---
+
+## O que retorna?
+
+```python
+loss = cross_entropy(...)
+```
+
+Retorna:
+
+```text
+Um único número.
+```
+
+Exemplos:
+
+```python
+0.12
+```
+
+```python
+2.70
+```
+
+---
+
+## Significado
+
+```text
+Loss pequena → rede indo bem
+
+Loss grande → rede indo mal
+```
+
+---
+
+# Sobre o 1e-8
+
+## Problema
+
+Evitar:
+
+```python
+np.log(0)
+```
+
+Resultado:
+
+```text
+-inf
+```
+
+---
+
+## Solução
+
+```python
+eps = 1e-8
+```
+
+```python
+np.log(y_pred + eps)
+```
+
+---
+
+# Estado Atual
+
+## Já Entendido
+
+- [x] X
+- [x] W
+- [x] b
+- [x] Z
+- [x] A
+- [x] ReLU
+- [x] ReLU Derivative
+- [x] Softmax
+- [x] Cross Entropy
+- [x] Loss
+
+---
+
+## Próximos Passos
+
+- [ ] One-Hot Encoding
+- [ ] Gradiente
+- [ ] dA
+- [ ] dZ
+- [ ] dW
+- [ ] db
+- [ ] Backpropagation
+- [ ] SGD
+- [ ] Forward Completo
+- [ ] Treinamento MNIST
+
+---
+
+# Intuição Atual
+
+Forward:
+
+```text
+Imagem
+↓
+MLP
+↓
+Softmax
+↓
+Probabilidades
+↓
+Cross Entropy
+↓
+Erro
+```
+
+Backward:
+
+```text
+Erro
+↓
+Backpropagation
+↓
+Descobrir quais pesos erraram
+↓
+Atualizar pesos
+↓
+Rede melhora
+```

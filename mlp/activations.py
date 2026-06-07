@@ -13,15 +13,4 @@ def softmax(x):
     exp = np.exp(x)
     return exp / np.sum(exp)
 
-# Retorna o loss (grande = rede indo mal, pequeno = rede indo bem)
-# Quando o loss vai dimuindo, a rede está aprendendo
-def cross_entropy(y_true, y_pred):
-    # Para evitar log(0)
-    eps = 1e-8
 
-    return -np.mean(
-        np.sum(
-            y_true * np.log(y_pred + eps),
-            axis=1
-        )
-    )
