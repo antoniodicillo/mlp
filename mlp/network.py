@@ -1,6 +1,6 @@
 import numpy as np
 from .activations import relu, relu_derivative, softmax
-from .losses import cross_entropy, one_hot_enconde
+from .losses import cross_entropy
 
 class MLP:
     def __init__(self, layer_sizes):

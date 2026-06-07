@@ -15,7 +15,7 @@ def cross_entropy(y_true, y_pred):
 
 # Simplifica a representação para 0 e 1
 # 0 = classe incorreta, 1 = classe correta
-def one_hot_enconde(y, num_classes=10):
+def one_hot(y, num_classes=10):
     result = np.zeros((len(y), num_classes))
     result[np.arange(len(y)), y] = 1
     return result
