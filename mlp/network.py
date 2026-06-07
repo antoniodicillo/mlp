@@ -9,13 +9,14 @@ class MLP:
 
         for i in range(len(layer_sizes) - 1):
             input = layer_sizes[i]
-            output   = layer_sizes[i + 1]
+            output = layer_sizes[i + 1]
 
             W = np.random.randn(input, output) * 0.01
             b = np.zeros((1, output))  
 
             self.weights.append(W)
             self.biases.append(b) 
+    # Pega a entrada X e passa por cada camada da rede
     def forward(self, X):
         self.Zs = []
         self.As = [X]
@@ -34,6 +35,7 @@ class MLP:
             self.As.append(A)
 
         return A
+    # Quanto cada peso e bias contribui para o erro
     def backward(self, y_true):
         self.dWs = []
         self.dbs = []
@@ -52,5 +54,4 @@ class MLP:
             if i > 0:
                 dA = dZ @ self.weights[i].T
                 dZ = dA * relu_derivative(self.Zs[i - 1])
- 
 
