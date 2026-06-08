@@ -16,8 +16,8 @@ Implementação de um Multi-Layer Perceptron (MLP) do zero usando apenas NumPy, 
 ├── notebook/
 │   └── experimentos.ipynb ← experimentos e análises
 ├── results/
-│   ├── loss_accuracy.png
-│   └── comparacao.png
+│   ├── loss_accuracy_1.png
+│   ├── loss_accuracy_2.png
 └── requirements.txt
 ```
 
@@ -65,6 +65,8 @@ Saída             10 neurônios  + Softmax
 
 ## Resultados
 
+**Acurácia final no conjunto de teste (lr=0.1):** 97.44%
+
 ### Comparação de configurações
 
 | Configuração | Loss (epoch 10) | Acurácia (epoch 10) |
@@ -84,8 +86,17 @@ Saída             10 neurônios  + Softmax
 
 ## Decisões e dificuldades
 
-<!-- Escreva em primeira pessoa. Responda:
-1. Qual foi a decisão técnica mais difícil que você tomou? Por que fez essa escolha?
-2. O que você tentou que não funcionou? O que aprendeu com isso?
-3. Se fosse refazer do zero, o que faria diferente?
--->
+
+### 1. Qual foi a decisão técnica mais difícil que você tomou? Por que fez essa escolha?
+
+A decisão mais difícil foi escolher o learning rate. Comecei com um valor baixo (0.01) e a rede demorava muito para convergir, com acurácia abaixo de 90%. Aumentar para 0.1 fez a perda cair rapidamente e a acurácia subir para mais de 97%, mas tive que monitorar para evitar divergência. Essa escolha foi crucial para alcançar um bom desempenho em apenas 10 epochs.
+
+### 2. O que você tentou que não funcionou? O que aprendeu com isso?
+
+Uma coisa que não funcionou foi a implementação inicial do Softmax: o `np.sum(exp)` estava somando todos os valores do batch de uma vez, em vez de normalizar cada imagem separadamente. Isso fazia as probabilidades ficarem completamente erradas e a loss virava NaN. Assim, a rede ficou com uma acurácia de ~9.87%, que é basicamente chute aleatório para 10 classes. A correção foi adicionar axis=1, keepdims=True ao np.sum e também subtrair o máximo antes do np.exp para estabilidade numérica.
+
+### 3. Se fosse refazer do zero, o que faria diferente?
+
+Se fosse refazer do zero eu começaria implementando uma versão mais simples do MLP para testar mais rápido e identificar bugs mais facilmente. 
+
+    
