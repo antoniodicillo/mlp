@@ -59,20 +59,20 @@ Saída             10 neurônios  + Softmax
 **Por que essa arquitetura:**
 - 2 camadas ocultas permitem aprender representações mais abstratas dos dígitos
 - ReLU evita o problema do gradiente desaparecendo e é computacionalmente eficiente
-- 128 → 64 neurônios reduz progressivamente a dimensionalidade até os 10 classes de saída
+- 128 para 64 neurônios reduz progressivamente a dimensionalidade até os 10 classes de saída
 
 ---
 
 ## Resultados
 
-**Acurácia final no conjunto de teste (lr=0.1):** 97.44%
+**Acurácia final no conjunto de teste (lr=0.1):** 97.33%
 
 ### Comparação de configurações
 
-| Configuração | Loss (epoch 10) | Acurácia (epoch 10) |
-|--------------|-----------------|----------------------|
-| lr = 0.01    | 0.4378          | 88.32%                 |
-| lr = 0.1     | 0.0442           | 97.44%               |
+| Configuração | Loss treino (epoch 20) | Acc treino (epoch 20) | Val Loss (epoch 20) | Val Acc (epoch 20) |
+|--------------|------------------------|------------------------|----------------------|--------------------|
+| lr = 0.01    | 0.2034                 | 94.49%                 | 0.2032               | 94.08%             |
+| lr = 0.1     | 0.0340                 | 99.06%                 | 0.0866               | 97.33%             |
 
 #### Primeira configuração (lr=0.01)
 

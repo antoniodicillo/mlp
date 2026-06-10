@@ -55,9 +55,11 @@ class MLP:
                 dA = dZ @ self.weights[i].T
                 dZ = dA * relu_derivative(self.Zs[i - 1])
     # Embaralha os dados e divide em batches
-    def fit(self, X, y, optimizer, epochs=10, batch_size=64):
+    def fit(self, X, y, optimizer, epochs=10, batch_size=64, X_val=None, y_val=None):
         self.history_loss = []
         self.history_acc = []
+        self.history_val_loss = []
+        self.history_val_acc = []
 
         for epoch in range(epochs):
             # Embaralha os dados
@@ -76,14 +78,24 @@ class MLP:
                 optimizer.step(self)
 
                 total_loss += loss
-            
+
             loss_media = total_loss / (len(X) // batch_size)
             acc = self.accuracy(X, y)
 
             self.history_loss.append(loss_media)
             self.history_acc.append(acc)
 
-            print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss_media:.4f} - Acc: {acc:.4f}")
+            log = f"Epoch {epoch + 1}/{epochs} - Loss: {loss_media:.4f} - Acc: {acc:.4f}"
+
+            if X_val is not None and y_val is not None:
+                val_probs = self.forward(X_val)
+                val_loss = cross_entropy(y_val, val_probs)
+                val_acc = self.accuracy(X_val, y_val)
+                self.history_val_loss.append(val_loss)
+                self.history_val_acc.append(val_acc)
+                log += f" - Val Loss: {val_loss:.4f} - Val Acc: {val_acc:.4f}"
+
+            print(log)
 
     # Compara a classe com a maior probabilidade com o rótulo real
     def predict(self, X):
